@@ -1,5 +1,10 @@
 # LESCO Billing Application
 
+<ul>
+<li>Use Windows Presentation Foundation (WPF)</li>
+<li>Smooth interface</li>
+<li>Async processing</li>
+</ul>
 
 <h4>System Requirements</h4>
 <ol>
