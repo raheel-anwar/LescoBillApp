@@ -1,5 +1,6 @@
 # LESCO Billing Application
 
+<h4>Project Specifications</h4>
 <ul>
 <li>Use Windows Presentation Foundation (WPF)</li>
 <li>Smooth interface</li>
