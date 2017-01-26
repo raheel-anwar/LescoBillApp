@@ -2,7 +2,7 @@
 
 <h4>Project Specifications</h4>
 <ul>
-<li>Use Windows Presentation Foundation (WPF)</li>
+<li>Windows Presentation Foundation (WPF)</li>
 <li>Smooth interface</li>
 <li>Async processing</li>
 </ul>
