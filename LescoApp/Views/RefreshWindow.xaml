@@ -1,0 +1,14 @@
+﻿<Window x:Class="LescoApp.RefreshWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LescoApp"
+        mc:Ignorable="d"
+        Title="Refreshing..." Height="200" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Loaded="Window_Loaded">
+    <Grid>
+        <TextBlock x:Name="txtRefreshing" TextWrapping="Wrap" Text="Refreshing Application..." VerticalAlignment="Top" Height="30" FontSize="16" Margin="101.474,53.959,122.526,0"/>
+        <TextBlock x:Name="txtWait" TextWrapping="Wrap" Text="Please Wait..." FontSize="16" Margin="101.473,83.959,122.527,57.041"/>
+
+    </Grid>
+</Window>

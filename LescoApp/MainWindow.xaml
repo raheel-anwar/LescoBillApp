@@ -1,0 +1,145 @@
+﻿<Window x:Class="LescoApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LescoApp"
+        xmlns:views="clr-namespace:LescoApp.Views"
+        mc:Ignorable="d"
+        Title="LESCO Bill App" Height="600" Width="1000" WindowStartupLocation="CenterScreen" WindowState="Maximized" Loaded="Window_Loaded" MinWidth="1000" MinHeight="600" Icon="Icons/favicon.ico">
+
+    <Window.Resources>
+        <!--Loading Animations General Storyboard-->
+        <Storyboard x:Key="fadeOut">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" 
+                             From="0"
+                             To="-80"
+                             Duration="0:0:0:1">
+
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" 
+                             From="1"
+                             To="0"
+                             Duration="0:0:0:0.6">
+
+            </DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Key="fadeIn">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" 
+                             From="80"
+                             To="0"
+                             Duration="0:0:0:1">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"></CubicEase>
+                </DoubleAnimation.EasingFunction>
+
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             From="0"
+                             To="1"
+                             Duration="0:0:0:1.5">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"></CubicEase>
+                </DoubleAnimation.EasingFunction>
+
+            </DoubleAnimation>
+        </Storyboard>
+        
+        <!--Loading Image Animation Storyboard-->
+        <Storyboard x:Key="fadeOutLoading">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" 
+                             From="1"
+                             To="0"
+                             Duration="0:0:0:1"/>
+        </Storyboard>
+        <Storyboard x:Key="fadeInLoading">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             From="0"
+                             To="1"
+                             Duration="0:0:0:1"/>
+        </Storyboard>
+
+        <!--Text (Loading Data...) Animation Storyboard-->
+        <Storyboard x:Key="fadeOutText">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" 
+                             From="0"
+                             To="80"
+                             Duration="0:0:0:1.5"/>
+        </Storyboard>
+        <Storyboard x:Key="fadeInText">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" 
+                             From="80"
+                             To="0"
+                             Duration="0:0:0:1.5">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"></CubicEase>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="0"
+                                             To="1"
+                                             Duration="0:0:0:1"
+                                             AutoReverse="True"
+                                             RepeatBehavior="Forever"/>
+        </Storyboard>
+    </Window.Resources>
+
+    <Grid RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased">
+        <Label x:Name="lblReferenceNo" Content="Reference No:" HorizontalAlignment="Left" Margin="5,10.053,0,0" VerticalAlignment="Top" FontSize="14.667" Width="110" Height="30" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontFamily="Segoe UI Semibold"/>
+        <TextBox x:Name="txtBatchNo" Height="30" Margin="120,9.5,0,0" VerticalAlignment="Top" FontSize="16" VerticalContentAlignment="Center" Padding="2,0,0,0" HorizontalAlignment="Left" Width="40" RenderTransformOrigin="0.475,0.479" TabIndex="1" MaxLength="2" TextChanged="txtBatchNo_TextChanged"/>
+        <TextBox x:Name="txtSubDiv" Height="30" Margin="165,9.5,0,0" VerticalAlignment="Top" FontSize="16" VerticalContentAlignment="Center" Padding="2,0,0,0" HorizontalAlignment="Left" Width="80" TabIndex="2" MaxLength="5" TextChanged="txtSubDiv_TextChanged" PreviewKeyDown="txtSubDiv_PreviewKeyDown"/>
+        <TextBox x:Name="txtRefNo" Height="30" Margin="250,9.5,0,0" VerticalAlignment="Top" FontSize="16" VerticalContentAlignment="Center" Padding="2,0,0,0" HorizontalAlignment="Left" Width="120" d:LayoutOverrides="HorizontalAlignment" TabIndex="3" MaxLength="10" PreviewKeyDown="txtRefNo_PreviewKeyDown"/>
+        <ComboBox x:Name="cmbRU" Margin="375,9,0,0" VerticalAlignment="Top" SelectedIndex="1" FontSize="16" Height="30" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="40" TabIndex="4">
+            <ComboBoxItem Content="R"/>
+            <ComboBoxItem Content="U"/>
+        </ComboBox>
+
+        <!--Functional Buttons Panel-->
+        <Button x:Name="btnSearch" Style="{StaticResource flatButton}" Content="Search" Margin="426,9,0,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" HorizontalAlignment="Left" Width="85" TabIndex="5" Click="btnSearch_Click" IsDefault="True" Foreground="Black"/>
+        <Button x:Name="btnRefresh" Style="{StaticResource flatButton}" Content="Restart" Margin="606,9,0,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" HorizontalAlignment="Left" Width="86" IsTabStop="False" Click="btnRefresh_Click"/>
+        <Button x:Name="btnClear" Style="{StaticResource flatButton}" Content="Clear" Margin="516,9,0,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" HorizontalAlignment="Left" Width="85" Click="btnClear_Click" TabIndex="6"/>
+        <Button x:Name="btnAbout" Style="{StaticResource flatButton}" Content="About" Margin="0,9,10,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" RenderTransformOrigin="1.176,0.444" HorizontalAlignment="Right" Width="85" IsTabStop="False" Click="btnAbout_Click"/>
+
+        <WebBrowser x:Name="wbBrowser" Margin="0,51.441,337,20" AllowDrop="True" Focusable="False"/>
+        <Path Data="M10,40.64 L792.09767,40.64" Height="1" Margin="0,51,-1.098,0" Stretch="Fill" VerticalAlignment="Top" Stroke="#FF858585" StrokeThickness="0.5"/>
+        <Rectangle x:Name="rectProgress" Height="3" Margin="0,47.999,-1.098,0" StrokeThickness="0.5" VerticalAlignment="Top" Fill="#FF0F0030"/>
+        <Rectangle x:Name="rectFooter" Height="20" Margin="0,0,-1.098,0" StrokeThickness="0.5" VerticalAlignment="Bottom" Fill="#FF0F0030"/>
+        <TextBlock x:Name="lblFooter" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="20" HorizontalAlignment="Left" Width="331.984" FontSize="13.333" Padding="5,0,0,0" Foreground="#FFD8D8D8"><Run Text="Developed by Raheel Anwar. Copyrights "/><Run Text="©"/><Run Text=" 2017."/></TextBlock>
+        
+        <!--Custom Company Logo-->
+        <views:CompanyLogo x:Name="CompanyView" Opacity="0" HorizontalAlignment="Right" Margin="0,57,59.006,0" VerticalAlignment="Top" Height="197.749" d:IsLocked="True">
+            <views:CompanyLogo.RenderTransform>
+                <TranslateTransform X="0" Y="0"></TranslateTransform>
+            </views:CompanyLogo.RenderTransform>
+        </views:CompanyLogo>
+        <views:AboutView x:Name="AboutView" Opacity="0" HorizontalAlignment="Right" Margin="0,57,-1.098,0" d:LayoutOverrides="Width, Height" VerticalAlignment="Top" d:IsLocked="True" d:IsHidden="True">
+            <views:AboutView.RenderTransform>
+                <TranslateTransform X="0" Y="0"></TranslateTransform>
+            </views:AboutView.RenderTransform>
+        </views:AboutView>
+
+        <!--Download Text and Loading Bar UI-->
+        <Image x:Name="circleLoading" Source="Images/loading.png" RenderTransformOrigin=".5,.5" HorizontalAlignment="Right" Width="80" Margin="0,384,132.5,0" Height="80" VerticalAlignment="Top">
+            <Image.RenderTransform>
+                <RotateTransform x:Name="loadingBar" Angle="0"></RotateTransform>
+            </Image.RenderTransform>
+            <Image.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="(Image.RenderTransform).(RotateTransform.Angle)"
+                                             To="360"
+                                             Duration="0:0:0:2"
+                                             RepeatBehavior="Forever"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Image.Triggers>
+        </Image>
+        <TextBlock x:Name="txtLoading" Margin="0,476,82,0" TextWrapping="NoWrap" Text="Downloading Data..." FontSize="18.667" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Right" Width="168" Height="30" VerticalAlignment="Top">
+            <TextBlock.RenderTransform>
+                <TranslateTransform x:Name="txtTranslate" X="0" Y="0"></TranslateTransform>
+            </TextBlock.RenderTransform>
+        </TextBlock>
+    </Grid>
+</Window>
