@@ -12,5 +12,5 @@
 <li>Windows 8/8.1/10</li>
 <li>.Net Framework 4.0 or higher</li>
 <li>Internet Connection</li>
-<li>Requires Visual Studio 2013 or higher (Community or Commercial)</li>
+<li>Requires Visual Studio 2013 or higher (Community/Commercial)</li>
 </ol>
