@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LescoApp"
         xmlns:views="clr-namespace:LescoApp.Views"
+        xmlns:Properties="clr-namespace:LescoApp.Properties"
+        WindowState="{Binding WindowState, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
+        Height="{Binding Height, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" 
+        Width="{Binding Width, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
+        Left="{Binding Left, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
+        Top="{Binding Top, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         mc:Ignorable="d"
-        Title="LESCO Bill App" Height="600" Width="1000" WindowStartupLocation="CenterScreen" WindowState="Maximized" Loaded="Window_Loaded" MinWidth="1000" MinHeight="600" Icon="Icons/favicon.ico">
+        Title="LESCO Bill App" WindowStartupLocation="Manual" Loaded="Window_Loaded" MinWidth="1200" MinHeight="700" Icon="Icons/favicon.ico" Closed="Window_Closed">
 
     <Window.Resources>
         <!--Loading Animations General Storyboard-->
@@ -44,7 +50,7 @@
 
             </DoubleAnimation>
         </Storyboard>
-        
+
         <!--Loading Image Animation Storyboard-->
         <Storyboard x:Key="fadeOutLoading">
             <DoubleAnimation Storyboard.TargetProperty="Opacity" 
@@ -85,60 +91,73 @@
     </Window.Resources>
 
     <Grid RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased">
-        <Label x:Name="lblReferenceNo" Content="Reference No:" HorizontalAlignment="Left" Margin="5,10.053,0,0" VerticalAlignment="Top" FontSize="14.667" Width="110" Height="30" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontFamily="Segoe UI Semibold"/>
-        <TextBox x:Name="txtBatchNo" Height="30" Margin="120,9.5,0,0" VerticalAlignment="Top" FontSize="16" VerticalContentAlignment="Center" Padding="2,0,0,0" HorizontalAlignment="Left" Width="40" RenderTransformOrigin="0.475,0.479" TabIndex="1" MaxLength="2" TextChanged="txtBatchNo_TextChanged"/>
-        <TextBox x:Name="txtSubDiv" Height="30" Margin="165,9.5,0,0" VerticalAlignment="Top" FontSize="16" VerticalContentAlignment="Center" Padding="2,0,0,0" HorizontalAlignment="Left" Width="80" TabIndex="2" MaxLength="5" TextChanged="txtSubDiv_TextChanged" PreviewKeyDown="txtSubDiv_PreviewKeyDown"/>
-        <TextBox x:Name="txtRefNo" Height="30" Margin="250,9.5,0,0" VerticalAlignment="Top" FontSize="16" VerticalContentAlignment="Center" Padding="2,0,0,0" HorizontalAlignment="Left" Width="120" d:LayoutOverrides="HorizontalAlignment" TabIndex="3" MaxLength="10" PreviewKeyDown="txtRefNo_PreviewKeyDown"/>
-        <ComboBox x:Name="cmbRU" Margin="375,9,0,0" VerticalAlignment="Top" SelectedIndex="1" FontSize="16" Height="30" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="40" TabIndex="4">
+
+        <!--Customer ID text fields-->
+        <TextBox x:Name="txtCustomerID" Margin="123,12,0,0" FontSize="16" VerticalContentAlignment="Center" Padding="2,0,0,0" RenderTransformOrigin="0.475,0.479" TabIndex="1" MaxLength="10" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="140" TextChanged="txtCustomerID_TextChanged"/>
+        <Label x:Name="lblCustomerID" Content="Customer ID:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="14.667" Width="110" Height="30" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontFamily="Segoe UI Semibold"/>
+
+        <!--Reference No text fields-->
+        <Label x:Name="lblReferenceNo" Content="Reference No:" HorizontalAlignment="Left" Margin="268,12.553,0,0" VerticalAlignment="Top" FontSize="14.667" Width="110" Height="30" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontFamily="Segoe UI Semibold"/>
+        <TextBox x:Name="txtBatchNo" Margin="383,12.553,0,0" FontSize="16" VerticalContentAlignment="Center" Padding="2,0,0,0" HorizontalAlignment="Left" Width="40" RenderTransformOrigin="0.475,0.479" TabIndex="2" MaxLength="2" TextChanged="txtBatchNo_TextChanged" Height="30" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtSubDiv" Height="30" Margin="428,12.553,0,0" VerticalAlignment="Top" FontSize="16" VerticalContentAlignment="Center" Padding="2,0,0,0" HorizontalAlignment="Left" Width="80" TabIndex="3" MaxLength="5" TextChanged="txtSubDiv_TextChanged" PreviewKeyDown="txtSubDiv_PreviewKeyDown"/>
+        <TextBox x:Name="txtRefNo" Height="30" Margin="513,12.553,0,0" VerticalAlignment="Top" FontSize="16" VerticalContentAlignment="Center" Padding="2,0,0,0" HorizontalAlignment="Left" Width="120" TabIndex="4" MaxLength="10" PreviewKeyDown="txtRefNo_PreviewKeyDown" TextChanged="txtRefNo_TextChanged"/>
+        <ComboBox x:Name="cmbRU" Margin="638,12.553,0,0" VerticalAlignment="Top" SelectedIndex="1" FontSize="16" Height="30" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="40" TabIndex="5">
             <ComboBoxItem Content="R"/>
             <ComboBoxItem Content="U"/>
         </ComboBox>
+        
+        <!--Domestic or Commercial Bills-->
+        <ComboBox x:Name="cmbType" Margin="683,12.553,0,0" VerticalAlignment="Top" SelectedIndex="1" FontSize="16" Height="30" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="115" TabIndex="6">
+            <ComboBoxItem IsSelected="True" Content="Domestic"/>
+            <ComboBoxItem Content="Commercial"/>
+        </ComboBox>
 
         <!--Functional Buttons Panel-->
-        <Button x:Name="btnSearch" Style="{StaticResource flatButton}" Content="Search" Margin="426,9,0,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" HorizontalAlignment="Left" Width="85" TabIndex="5" Click="btnSearch_Click" IsDefault="True" Foreground="Black"/>
-        <Button x:Name="btnRefresh" Style="{StaticResource flatButton}" Content="Restart" Margin="606,9,0,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" HorizontalAlignment="Left" Width="86" IsTabStop="False" Click="btnRefresh_Click"/>
-        <Button x:Name="btnClear" Style="{StaticResource flatButton}" Content="Clear" Margin="516,9,0,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" HorizontalAlignment="Left" Width="85" Click="btnClear_Click" TabIndex="6"/>
-        <Button x:Name="btnAbout" Style="{StaticResource flatButton}" Content="About" Margin="0,9,10,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" RenderTransformOrigin="1.176,0.444" HorizontalAlignment="Right" Width="85" IsTabStop="False" Click="btnAbout_Click"/>
+        <Button x:Name="btnSearch" Style="{StaticResource redButton}" Content="Search" Margin="803,13.053,0,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" HorizontalAlignment="Left" Width="85" TabIndex="6" Click="btnSearch_Click" IsDefault="True" Foreground="Black"/>
+        <Button x:Name="btnRefresh" Style="{StaticResource flatButton}" Content="Restart" Margin="983,13.053,0,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" HorizontalAlignment="Left" Width="86" IsTabStop="False" Click="btnRefresh_Click"/>
+        <Button x:Name="btnClear" Style="{StaticResource flatButton}" Content="Clear" Margin="893,12.553,0,0" FontSize="16" Padding="1,1,1,2" HorizontalAlignment="Left" Width="85" Click="btnClear_Click" TabIndex="7" Height="30" VerticalAlignment="Top"/>
+        <Button x:Name="btnAbout" Style="{StaticResource blueButton}" Content="About" Margin="0,13.053,10,0" VerticalAlignment="Top" Height="30" FontSize="16" Padding="1,1,1,2" RenderTransformOrigin="1.176,0.444" HorizontalAlignment="Right" Width="85" IsTabStop="False" Click="btnAbout_Click"/>
 
-        <WebBrowser x:Name="wbBrowser" Margin="0,51.441,337,20" AllowDrop="True" Focusable="False"/>
-        <Path Data="M10,40.64 L792.09767,40.64" Height="1" Margin="0,51,-1.098,0" Stretch="Fill" VerticalAlignment="Top" Stroke="#FF858585" StrokeThickness="0.5"/>
-        <Rectangle x:Name="rectProgress" Height="3" Margin="0,47.999,-1.098,0" StrokeThickness="0.5" VerticalAlignment="Top" Fill="#FF0F0030"/>
+        <WebBrowser x:Name="wbBrowser" Margin="0,56,337,20" AllowDrop="True" Focusable="False"/>
+        <Path Data="M10,40.64 L792.09767,40.64" Height="1" Margin="0,55.5,-1.098,0" Stretch="Fill" VerticalAlignment="Top" Stroke="#FF858585" StrokeThickness="0.5"/>
+        <Rectangle x:Name="rectProgress" Height="3" Margin="0,52.499,-1.098,0" StrokeThickness="0.5" VerticalAlignment="Top" Fill="#FF0F0030"/>
         <Rectangle x:Name="rectFooter" Height="20" Margin="0,0,-1.098,0" StrokeThickness="0.5" VerticalAlignment="Bottom" Fill="#FF0F0030"/>
         <TextBlock x:Name="lblFooter" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="20" HorizontalAlignment="Left" Width="331.984" FontSize="13.333" Padding="5,0,0,0" Foreground="#FFD8D8D8"><Run Text="Developed by Raheel Anwar. Copyrights "/><Run Text="©"/><Run Text=" 2017."/></TextBlock>
-        
+
         <!--Custom Company Logo-->
-        <views:CompanyLogo x:Name="CompanyView" Opacity="0" HorizontalAlignment="Right" Margin="0,57,59.006,0" VerticalAlignment="Top" Height="197.749" d:IsLocked="True">
+        <views:CompanyLogo x:Name="CompanyView" Opacity="0" HorizontalAlignment="Right" Margin="0,58.5,59.506,0" Height="197.749" VerticalAlignment="Top">
             <views:CompanyLogo.RenderTransform>
-                <TranslateTransform X="0" Y="0"></TranslateTransform>
+                <TranslateTransform X="0" Y="0"/>
             </views:CompanyLogo.RenderTransform>
         </views:CompanyLogo>
-        <views:AboutView x:Name="AboutView" Opacity="0" HorizontalAlignment="Right" Margin="0,57,-1.098,0" d:LayoutOverrides="Width, Height" VerticalAlignment="Top" d:IsLocked="True" d:IsHidden="True">
+        <views:AboutView x:Name="AboutView" Opacity="0" HorizontalAlignment="Right" Margin="0,58.5,0,0" d:LayoutOverrides="Width, Height" VerticalAlignment="Top">
             <views:AboutView.RenderTransform>
-                <TranslateTransform X="0" Y="0"></TranslateTransform>
+                <TranslateTransform X="0" Y="0"/>
             </views:AboutView.RenderTransform>
         </views:AboutView>
+        <views:ClientView x:Name="ClientView" Margin="0,0,7,20" VerticalAlignment="Bottom" Height="168.5" HorizontalAlignment="Right" d:LayoutOverrides="Width"/>
 
         <!--Download Text and Loading Bar UI-->
-        <Image x:Name="circleLoading" Source="Images/loading.png" RenderTransformOrigin=".5,.5" HorizontalAlignment="Right" Width="80" Margin="0,384,132.5,0" Height="80" VerticalAlignment="Top">
+        <Image x:Name="circleLoading" Source="Images/loading.png" RenderTransformOrigin=".5,.5" HorizontalAlignment="Right" Width="80" Margin="0,353.5,132.5,0" Height="80" VerticalAlignment="Top">
             <Image.RenderTransform>
-                <RotateTransform x:Name="loadingBar" Angle="0"></RotateTransform>
+                <RotateTransform x:Name="loadingBar" Angle="0"/>
             </Image.RenderTransform>
             <Image.Triggers>
-                <EventTrigger RoutedEvent="Loaded">
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                     <BeginStoryboard>
                         <Storyboard>
-                            <DoubleAnimation Storyboard.TargetProperty="(Image.RenderTransform).(RotateTransform.Angle)"
-                                             To="360"
-                                             Duration="0:0:0:2"
-                                             RepeatBehavior="Forever"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+    							To="360"
+    							Duration="0:0:0:2"
+    							RepeatBehavior="Forever"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
             </Image.Triggers>
         </Image>
-        <TextBlock x:Name="txtLoading" Margin="0,476,82,0" TextWrapping="NoWrap" Text="Downloading Data..." FontSize="18.667" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Right" Width="168" Height="30" VerticalAlignment="Top">
+        <TextBlock x:Name="txtLoading" Margin="0,445.5,82,0" TextWrapping="NoWrap" Text="Downloading Data..." FontSize="18.667" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Right" Width="168" Height="30" VerticalAlignment="Top">
             <TextBlock.RenderTransform>
-                <TranslateTransform x:Name="txtTranslate" X="0" Y="0"></TranslateTransform>
+                <TranslateTransform x:Name="txtTranslate" X="0" Y="0"/>
             </TextBlock.RenderTransform>
         </TextBlock>
     </Grid>

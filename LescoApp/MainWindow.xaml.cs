@@ -18,6 +18,7 @@ using System.Threading;
 using System.IO;
 using LescoApp.Classes;
 using System.Windows.Media.Animation;
+using System.Collections;
 
 namespace LescoApp
 {
@@ -31,9 +32,14 @@ namespace LescoApp
         {
             InitializeComponent();
 
-            txtBatchNo.PreviewKeyDown += new KeyEventHandler(numFieldValidation);
-            txtSubDiv.PreviewKeyDown += new KeyEventHandler(numFieldValidation);
-            txtRefNo.PreviewKeyDown += new KeyEventHandler(numFieldValidation);
+            TextBox[] txtFields = {txtCustomerID, txtBatchNo, txtSubDiv, txtRefNo};
+
+            foreach (TextBox txtField in txtFields)
+            {
+                txtField.PreviewKeyDown += new KeyEventHandler(numFieldValidation);
+                txtField.GotMouseCapture += (object sender, MouseEventArgs e) => txtField.SelectAll();
+                txtField.GotFocus += (object sender, RoutedEventArgs e) => txtField.SelectAll();
+            }
 
             txtLoading.Visibility = Visibility.Hidden;
             circleLoading.Visibility = Visibility.Hidden;
@@ -44,7 +50,7 @@ namespace LescoApp
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             wbBrowser.Navigate("about:blank");
-            txtBatchNo.Focus();
+            txtCustomerID.Focus();
 
             try
             {
@@ -64,6 +70,8 @@ namespace LescoApp
         //Search button on click event
         private async void btnSearch_Click(object sender, RoutedEventArgs e)
         {
+            bool IsCommercial = string.Equals(cmbType.Text, "Commercial") ? true : false; ;
+
             //Disable search button to prevent async commands stacking
             wbBrowser.Navigate("about:blank");
             btnSearch.IsEnabled = false;
@@ -71,10 +79,13 @@ namespace LescoApp
             //BatchNo, SubDivNo and RefNo Validation
             if (string.IsNullOrEmpty(txtBatchNo.Text) || string.IsNullOrEmpty(txtSubDiv.Text) || string.IsNullOrEmpty(txtRefNo.Text))
             {
-                MessageBox.Show("Reference no is empty. Please enter a valid reference no.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-                txtBatchNo.Focus();
-                btnSearch.IsEnabled = true;
-                return;
+                if (string.IsNullOrEmpty(txtCustomerID.Text))
+                {
+                    MessageBox.Show("Please provide a valid Customer ID or Reference Number.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    txtCustomerID.Focus();
+                    btnSearch.IsEnabled = true;
+                    return;
+                }
             }
 
             //Fade in loading animation
@@ -86,7 +97,7 @@ namespace LescoApp
 
             //Set web browser to a blank page
             wbBrowser.Navigate("about:blank");
-            await Task.Delay(500);
+            await Task.Delay(600);
 
             //Clean any old downloaded files
             try
@@ -109,17 +120,44 @@ namespace LescoApp
             }
 
             //Get Lesco bill as PDF document
+            LescoBills newBill = new LescoBills();
+            string customerID = txtCustomerID.Text;
+            
             try
             {
-                LescoBills newBill = new LescoBills(txtBatchNo.Text, txtSubDiv.Text, txtRefNo.Text, cmbRU.Text);
-                newBill.currentPath = UtilityClass.getTempPath();
-                await Task.Run(() => {
-                    newBill.getLescoBillPDF();
-                });
+                if (txtCustomerID.IsEnabled == true)
+                {
+                    await Task.Run(() => newBill.customerID(customerID, IsCommercial)); 
+                }
+                else
+                {
+                    newBill.referenceNo(txtBatchNo.Text, txtSubDiv.Text, txtRefNo.Text, cmbRU.Text, IsCommercial);
+                }
+
+                if (IsCommercial)
+                {
+                    wbBrowser.Navigate(newBill.getURL);
+
+                    //Fade out loading animation
+                    UtilityClass.customAnimation(this, "fadeOutLoading", circleLoading);
+                    UtilityClass.customAnimation(this, "fadeOutText", txtLoading);
+                    await Task.Delay(600);
+                    txtLoading.Visibility = Visibility.Hidden;
+                    circleLoading.Visibility = Visibility.Hidden;
+
+                    btnSearch.IsEnabled = true;
+                    return;
+                }
+                else
+                {
+                    newBill.currentPath = UtilityClass.getTempPath();
+                    await Task.Run(() => {
+                        newBill.getLescoBillPDF();
+                    });
+                }
             }
             catch
             {
-                //MessageBox.Show("Unable to communicate with the remote server. Please check your internet connection and try again.", "Connection Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 wbBrowser.Navigate(string.Format(@"{0}\Data\errorReport.html", Directory.GetCurrentDirectory()));
 
                 //Fade out loading animation
@@ -132,7 +170,6 @@ namespace LescoApp
                 btnSearch.IsEnabled = true;
                 return;
             }
-
             //Redirect web browser to recently downloaded PDF document
             navigatePDF();
         }
@@ -140,11 +177,13 @@ namespace LescoApp
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             wbBrowser.Navigate("about:blank");
+            txtCustomerID.Text = "";
             txtBatchNo.Text = "";
             txtSubDiv.Text = "";
             txtRefNo.Text = "";
-            cmbRU.Text = "U";
-            txtBatchNo.Focus();
+            cmbRU.SelectedIndex = 1;
+            cmbType.SelectedIndex = 0;
+            txtCustomerID.Focus();
         }
         //Restart button on click event
         private async void btnRefresh_Click(object sender, RoutedEventArgs e)
@@ -159,6 +198,7 @@ namespace LescoApp
         //About button on click event (Developer Info)
         private async void btnAbout_Click(object sender, RoutedEventArgs e)
         {
+            
             btnAbout.IsEnabled = false;
             if (CompanyView.Visibility == Visibility.Visible)
             {
@@ -223,9 +263,20 @@ namespace LescoApp
             }
         }
 
-        //Auto field forward logic implementation
+        /// <summary>
+        /// All the text Validations and Checks are programmed below
+        /// </summary>
         private void txtBatchNo_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (txtBatchNo.Text.Length > 0 || txtSubDiv.Text.Length > 0 || txtRefNo.Text.Length > 0)
+            {
+                txtCustomerID.IsEnabled = false;
+            }
+            else
+            {
+                txtCustomerID.IsEnabled = true;
+            }
+
             if (txtBatchNo.Text.Length == 2)
             {
                 txtSubDiv.Focus();
@@ -233,9 +284,46 @@ namespace LescoApp
         }
         private void txtSubDiv_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (txtBatchNo.Text.Length > 0 || txtSubDiv.Text.Length > 0 || txtRefNo.Text.Length > 0)
+            {
+                txtCustomerID.IsEnabled = false;
+            }
+            else
+            {
+                txtCustomerID.IsEnabled = true;
+            }
+
             if (txtSubDiv.Text.Length == 5)
             {
                 txtRefNo.Focus();
+            }
+        }
+        private void txtRefNo_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txtBatchNo.Text.Length > 0 || txtSubDiv.Text.Length > 0 || txtRefNo.Text.Length > 0)
+            {
+                txtCustomerID.IsEnabled = false;
+            }
+            else
+            {
+                txtCustomerID.IsEnabled = true;
+            }
+        }
+        private void txtCustomerID_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txtCustomerID.Text.Length > 0)
+            {
+                txtBatchNo.IsEnabled = false;
+                txtSubDiv.IsEnabled = false;
+                txtRefNo.IsEnabled = false;
+                cmbRU.IsEnabled = false;
+            }
+            else
+            {
+                txtBatchNo.IsEnabled = true;
+                txtSubDiv.IsEnabled = true;
+                txtRefNo.IsEnabled = true;
+                cmbRU.IsEnabled = true;
             }
         }
         //Auto field backspace logic implementation
@@ -254,6 +342,12 @@ namespace LescoApp
                 txtBatchNo.Focus();
                 e.Handled = true;
             }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            // Save the property settings
+            Properties.Settings.Default.Save();
         }
     }
 }

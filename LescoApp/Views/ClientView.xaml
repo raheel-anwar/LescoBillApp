@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="LescoApp.Views.ClientView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LescoApp.Views"
+             mc:Ignorable="d" Height="170" Width="330">
+
+    <Grid RenderOptions.BitmapScalingMode="HighQuality">
+        <Path Data="M-10.666667,92 L330.06476,92" Fill="#FFF4F4F5" Height="1" Margin="10,96.989,0,0" Stretch="Fill" Stroke="Black" VerticalAlignment="Top" StrokeThickness="2" HorizontalAlignment="Left" Width="299.065"/>
+
+        <TextBlock x:Name="textBlock" Text="  Prime Mobile &amp; Internet Cafe" HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21.333" Width="330" Margin="0,62.989,0,72.011" FontWeight="Bold"/>
+        <TextBlock x:Name="textBlock_Copy2" Text="   Phone No: 0310-4102030" HorizontalAlignment="Left" Margin="0,102.989,0,0" TextWrapping="Wrap" FontSize="16" Width="330" RenderTransformOrigin="0.5,0.5" Height="25" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock_Copy3" HorizontalAlignment="Left" Margin="0,128.335,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" Width="330" Height="25" Text="   Email: 03104102030M@gmail.com"/>
+        <Path Data="M-10.666667,92 L330.06476,92" Fill="#FFF4F4F5" Height="1" Margin="10,61.989,0,0" Stretch="Fill" Stroke="Black" VerticalAlignment="Top" StrokeThickness="2" HorizontalAlignment="Left" Width="299.065" d:LayoutOverrides="VerticalAlignment"/>
+
+    </Grid>
+</UserControl>

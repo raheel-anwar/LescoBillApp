@@ -11,17 +11,33 @@ namespace LescoApp.Classes
 {
     class LescoBills
     {
-        private string baseAddress;
+        private string lescoURL;
+        public string getURL { get { return lescoURL; } }
         public string currentPath { get; set; }
 
         //Constructor Methods
-        public LescoBills (string batchNo, string subDiv, string refNo, string valueRU)
+        public LescoBills()
         {
-            baseAddress = string.Format("http://108.166.183.120/Default.aspx?BatchNo={0}&SubDiv={1}&RefNo={2}&RU={3}", batchNo, subDiv, refNo, valueRU);
+            lescoURL = "";
+        }
+        public void customerID(string custID, bool IsCommercial)
+        {
+            lescoURL = getReferenceNo(custID, IsCommercial);
+        }
+        public void referenceNo(string batchNo, string subDiv, string refNo, string valueRU, bool IsCommercial)
+        {
+            if (IsCommercial == true)
+            {
+                lescoURL = string.Format("http://www.lesco.gov.pk/Modules/CustomerBill/BillPrintMDI.asp?nBatchNo={0}&nSubDiv={1}&nRefNo={2}&strRU={3}", batchNo, subDiv, refNo, valueRU);
+            }
+            else
+            {
+                lescoURL = string.Format("http://108.166.183.120/Default.aspx?BatchNo={0}&SubDiv={1}&RefNo={2}&RU={3}", batchNo, subDiv, refNo, valueRU);
+            }
         }
 
         //Search the string to get a specific value between two points.
-        private string getAddress(string strSource, string strStart, string strEnd)
+        private string findURL(string strSource, string strStart, string strEnd)
         {
             int stringStart;
             int stringEnd;
@@ -39,7 +55,7 @@ namespace LescoApp.Classes
             CookieContainer newCookie = new CookieContainer();
 
             //Create a request and response for main HTML page
-            HttpWebRequest mainPageRequest = (HttpWebRequest)WebRequest.Create(baseAddress);
+            HttpWebRequest mainPageRequest = (HttpWebRequest)WebRequest.Create(lescoURL);
             mainPageRequest.CookieContainer = newCookie;
             HttpWebResponse mainPageResponse = (HttpWebResponse)mainPageRequest.GetResponse();
 
@@ -54,7 +70,7 @@ namespace LescoApp.Classes
             StringBuilder sb = new StringBuilder();
             try
             {
-                sb.Append(getAddress(webString, @"\/Reserved.ReportViewerWebControl", "OnlyHtmlInline&Format="));
+                sb.Append(findURL(webString, @"\/Reserved.ReportViewerWebControl", "OnlyHtmlInline&Format="));
                 sb.Append("OnlyHtmlInline&Format=PDF");
                 sb.Insert(0, @"http://108.166.183.120/Reserved.ReportViewerWebControl");
             }
@@ -83,6 +99,45 @@ namespace LescoApp.Classes
 
             mainPageResponse.Close();
             responsePDF.Close();
+        }
+
+        //Get Reference No from CustomerID first
+        public string getReferenceNo(string custID, bool IsCommercial)
+        {
+            string URL = "http://www.lesco.gov.pk/Modules/CustomerBill/CustomerMenu.asp";
+            string customerID = string.Format("txtCustID={0}", custID);
+            string searchParam = IsCommercial ? "/Modules/CustomerBill/BillPrintMDI.asp?nBatchNo=" : "/Modules/CustomerBill/BillPrint.asp?nBatchNo=";
+
+            string referenceNo;
+
+            using (WebClient web = new WebClient())
+            {
+                web.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                string resultHTML = web.UploadString(URL, customerID);
+                string refNo = findURL(resultHTML, searchParam, "\"");
+                
+
+                if (IsCommercial)
+                {
+                    refNo = refNo.Insert(0, "http://www.lesco.gov.pk/Modules/CustomerBill/BillPrintMDI.asp?nBatchNo=");
+                    referenceNo = refNo;
+                }
+                else
+                {
+                    refNo = refNo.Replace("n", "").Replace("strR", "R");
+                    refNo = refNo.Insert(0, "http://108.166.183.120/Default.aspx?BatchNo=");
+                    referenceNo = refNo;
+                }
+
+            }
+            if (referenceNo.Contains("RefNo="))
+            {
+                return referenceNo;
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
     }
 }
